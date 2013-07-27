@@ -13,32 +13,41 @@ namespace ListCompare
         [Test]
         public void OrderedListsWillFail()
         {
-            var defaultList = People.GetPeople();
-            
+            var failList = People.OrderedPersonsFirstName().ToList();
+            Assert.AreNotSame(failList.OrderBy(p => p.FirstName).ToList(), failList);
         }
-        
+
         [Test]
         public void OrderedListsOneWay()
         {
-            var defaultList = People.GetPeople().OrderBy(p => p.FirstName);
-            var orderedList = People.OrderedPersonsFirstName();
-            Assert.AreEqual(defaultList, defaultList.OrderBy(p => p.LastName));
-
+            var orderedList = People.OrderedPersonsFirstName().ToList();
+            Assert.AreEqual(orderedList.OrderBy(p => p.FirstName), orderedList);
         }
 
         [Test]
         public void OrderedListsAnotherWay()
         {
-            var defaultList = People.GetPeople().OrderBy(p => p.LastName);
-            var expectedList = People.OrderedPersonsLastName();
-            CollectionAssert.AreEquivalent(expectedList, defaultList);
+            var expectedList = People.OrderedPersonsLastName().ToList();
+            CollectionAssert.AreEqual(expectedList.OrderBy(p => p.LastName), expectedList);
         }
 
         [Test]
         public void OrderedListsAThirdWay()
         {
-            var defaultList = People.GetPeople();
-            People.OrderedPersonsFirstName().SequenceEqual(defaultList.OrderBy(p => p.FirstName));
+            var list = People.OrderedPeopleIdDescending().ToList();
+            Assert.IsTrue(list.SequenceEqual(list.OrderByDescending(p => p.PersonId)));
+        }
+
+        [Test]
+        public void NoobieCheckingListsAreOrdered()
+        {
+            var orderedList = People.OrderedPeopleId().ToList();
+            var expectedList = orderedList.OrderBy(p => p.PersonId).ToList();
+
+            for (int i = 0; i < orderedList.Count; i++)
+            {
+                Assert.AreEqual(expectedList[i], orderedList[i]);
+            }
         }
     }
 
@@ -53,19 +62,29 @@ namespace ListCompare
 
         }
 
-        public static List<Person> OrderedPersonsLastName()
+        public static IEnumerable<Person> OrderedPersonsLastName()
         {
             return new People().Persons.OrderBy(p => p.LastName).ToList();
         }
 
-        public static List<Person> OrderedPersonsFirstName()
+        public static IEnumerable<Person> OrderedPersonsFirstName()
         {
-            return new People().Persons.OrderBy(p => p.LastName).ToList();
+            return new People().Persons.OrderBy(p => p.FirstName).ToList();
         }
 
-        public static List<Person> GetPeople()
+        public static IEnumerable<Person> GetPeople()
         {
             return new People().Persons;
+        }
+
+        public static IEnumerable<Person> OrderedPeopleIdDescending()
+        {
+            return new People().Persons.OrderByDescending(p => p.PersonId).ToList();
+        }
+
+        public static IEnumerable<Person> OrderedPeopleId()
+        {
+            return new People().Persons.OrderBy(p => p.PersonId).ToList();
         }
 
         private void AddDefaultPeople()
