@@ -11,7 +11,7 @@ namespace ListCompare
     public class ListsCompareTest
     {
         [Test]
-        public void OrderedListsWillFail()
+        public void OrderedListsAreNotSame()
         {
             var failList = People.OrderedPersonsFirstName().ToList();
             Assert.AreNotSame(failList.OrderBy(p => p.FirstName).ToList(), failList);
